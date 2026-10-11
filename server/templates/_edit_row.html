@@ -1,0 +1,26 @@
+{% set d = draft or e %}
+<tr id="event-{{ e.id }}" class="editing">
+  <td>
+    <select name="severity">
+      {% for s in SEVERITIES %}<option value="{{ s }}" {{ 'selected' if d.severity == s }}>{{ SEV_EMOJI[s] }}</option>{% endfor %}
+    </select>
+  </td>
+  <td>
+    <input name="title" value="{{ d.title }}" autofocus
+           hx-put="/events/{{ e.id }}" hx-trigger="keyup[key=='Enter']" hx-include="closest tr"
+           hx-target="closest tr" hx-swap="outerHTML">
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+  </td>
+  <td>
+    <select name="category">
+      {% for c in CATEGORIES %}<option {{ 'selected' if d.category == c }}>{{ c }}</option>{% endfor %}
+    </select>
+  </td>
+  <td colspan="2"><span class="hx-badge">click-to-edit</span></td>
+  <td class="right nowrap">
+    <button hx-put="/events/{{ e.id }}" hx-include="closest tr"
+            hx-target="closest tr" hx-swap="outerHTML">Save</button>
+    <button class="secondary" hx-get="/events/{{ e.id }}/row"
+            hx-target="closest tr" hx-swap="outerHTML">Cancel</button>
+  </td>
+</tr>

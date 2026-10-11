@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}htmx features{% endblock %}
+{% block content %}
+<section class="card prose">
+  <h2>What this demo shows</h2>
+  <p>You got here via an <code>hx-boost</code>ed link: htmx fetched this page with AJAX, swapped the
+     <code>&lt;body&gt;</code>, and pushed a history entry. Hit Back to see history restore.</p>
+  <table class="features">
+    <thead><tr><th>Feature</th><th>Where to see it</th><th>Attributes / headers</th></tr></thead>
+    <tbody>
+      <tr><td>AJAX form</td><td>“Log new chaos” card</td><td><code>hx-post</code>, <code>hx-target</code>, <code>hx-swap="afterbegin"</code>, <code>hx-disabled-elt</code></td></tr>
+      <tr><td>Form reset via server event</td><td>After logging</td><td><code>HX-Trigger: chaos-logged</code> + <code>hx-on:chaos-logged</code></td></tr>
+      <tr><td>Server-side validation retargeting</td><td>Submit empty title</td><td><code>HX-Retarget</code>, <code>HX-Reswap</code></td></tr>
+      <tr><td>Active search</td><td>Search box &amp; filters</td><td><code>hx-trigger="input changed delay:300ms, search"</code>, <code>hx-include</code>, <code>hx-indicator</code>, <code>hx-sync</code></td></tr>
+      <tr><td>Bookmarkable filters</td><td>Address bar while filtering</td><td><code>HX-Push-Url</code> response header</td></tr>
+      <tr><td>Click-to-edit</td><td>✏️ on a row (Enter or Save)</td><td><code>hx-get</code>, <code>hx-put</code>, <code>hx-include="closest tr"</code>, <code>hx-trigger="keyup[key=='Enter']"</code></td></tr>
+      <tr><td>Status workflow</td><td>Status pill</td><td><code>hx-patch</code>, <code>hx-target="closest tr"</code></td></tr>
+      <tr><td>Delete with confirm &amp; fade</td><td>🗑️ on a row</td><td><code>hx-delete</code>, <code>hx-confirm</code>, <code>hx-swap="outerHTML swap:500ms"</code> + <code>.htmx-swapping</code> CSS</td></tr>
+      <tr><td>Fade-in of new rows</td><td>Any created/updated row</td><td><code>.htmx-added</code> CSS class</td></tr>
+      <tr><td>Polling</td><td>Chaos level card</td><td><code>hx-trigger="every 2s"</code></td></tr>
+      <tr><td>Out-of-band swaps</td><td>Header counter, stats card</td><td><code>hx-swap-oob</code></td></tr>
+      <tr><td>Toasts</td><td>Bottom-right</td><td><code>HX-Trigger: {"showToast": …}</code></td></tr>
+      <tr><td>Infinite scroll</td><td>Bottom of incident log</td><td><code>hx-trigger="revealed"</code></td></tr>
+      <tr><td>Detail drawer w/ history</td><td>Click an incident title</td><td><code>hx-push-url</code>, <code>hx-select</code> on close</td></tr>
+      <tr><td>Live push</td><td>Chaos monkey</td><td>SSE extension: <code>hx-ext="sse"</code>, <code>sse-connect</code>, <code>sse-swap</code></td></tr>
+      <tr><td>Boosted navigation</td><td>Top nav</td><td><code>hx-boost</code></td></tr>
+    </tbody>
+  </table>
+  <p class="muted">Current total: {{ stats.total }} events.</p>
+</section>
+{% endblock %}

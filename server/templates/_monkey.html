@@ -1,0 +1,4 @@
+<button id="monkey-btn" class="monkey {{ 'on' if on }}"
+        hx-post="/monkey" hx-swap="outerHTML" hx-target="this">
+  {{ '🛑 Cage the monkey' if on else '🐒 Unleash chaos monkey' }}
+</button>

@@ -1,0 +1,21 @@
+<tr id="event-{{ e.id }}" class="sev-{{ e.severity }} st-{{ e.status }}{{ ' fresh' if fresh }}">
+  <td><span class="sev" title="{{ e.severity }}">{{ SEV_EMOJI[e.severity] }}</span></td>
+  <td>
+    <a href="/events/{{ e.id }}" class="title-link"
+       hx-get="/events/{{ e.id }}" hx-target="#detail" hx-swap="outerHTML" hx-push-url="true">{{ e.title }}</a>
+  </td>
+  <td><span class="tag">{{ e.category }}</span></td>
+  <td>
+    <button class="status status-{{ e.status }}"
+            hx-patch="/events/{{ e.id }}/status" hx-target="closest tr" hx-swap="outerHTML"
+            title="Click to advance → {{ NEXT_STATUS[e.status] }} (hx-patch)">{{ e.status }} ➜</button>
+  </td>
+  <td class="muted">{{ e.created|ago }}</td>
+  <td class="right nowrap">
+    <button class="icon" title="Edit inline (hx-get)"
+            hx-get="/events/{{ e.id }}/edit" hx-target="closest tr" hx-swap="outerHTML">✏️</button>
+    <button class="icon" title="Delete (hx-delete + hx-confirm)"
+            hx-delete="/events/{{ e.id }}" hx-target="closest tr" hx-swap="outerHTML swap:500ms"
+            hx-confirm="Sweep “{{ e.title }}” under the rug?">🗑️</button>
+  </td>
+</tr>

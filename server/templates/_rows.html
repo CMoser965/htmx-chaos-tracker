@@ -1,0 +1,8 @@
+{% for e in rows %}{% include "_row.html" %}{% else %}{% if not request.args.get('before') %}<tr class="empty"><td colspan="6">No chaos matches. Enjoy the silence. 🕊️</td></tr>{% endif %}{% endfor %}
+{% if next_before %}
+<tr id="load-more" class="load-more"
+    hx-get="/events?before={{ next_before }}&q={{ f.q|urlencode }}&severity={{ f.severity }}&status={{ f.status }}"
+    hx-trigger="revealed" hx-swap="outerHTML" hx-target="this">
+  <td colspan="6"><span class="spinner"></span> Loading more chaos… <span class="hx-badge">hx-trigger="revealed"</span></td>
+</tr>
+{% endif %}

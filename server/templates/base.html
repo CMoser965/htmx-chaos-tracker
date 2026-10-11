@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Chaos Tracker{% endblock %} · htmx demo</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js"></script>
+  <script src="https://unpkg.com/htmx-ext-sse@2.2.2/sse.js"></script>
+  <script src="/static/toast.js" defer></script>
+</head>
+<body>
+  {# hx-boost: plain <a> links become AJAX body swaps + history entries #}
+  <header class="topbar" hx-boost="true">
+    <a href="/" class="brand">🌀 Chaos Tracker</a>
+    <nav>
+      <a href="/" class="{{ 'active' if request.path == '/' }}">Incidents</a>
+      <a href="/about" class="{{ 'active' if request.path == '/about' }}">htmx features</a>
+      <span class="hx-badge" title="Nav links use hx-boost: AJAX navigation with history, no full reload">hx-boost</span>
+    </nav>
+    <div class="counter-wrap" title="Updated out-of-band (hx-swap-oob) by create/edit/delete responses">
+      chaos events: {% include "_counter.html" %}
+      <span class="hx-badge">hx-swap-oob</span>
+    </div>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <div id="toasts" aria-live="polite"></div>
+  <footer>Server returns only HTML. ~15 lines of JS (toasts). Everything else is <code>hx-*</code> attributes.</footer>
+</body>
+</html>

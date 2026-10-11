@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+<div hx-ext="sse" sse-connect="/stream">{# one SSE connection; children use sse-swap #}
+<div class="grid">
+  <section class="card">
+    <h2>Log new chaos <span class="hx-badge" title='hx-post="/events" hx-target="#event-rows" hx-swap="afterbegin" + HX-Trigger "chaos-logged" resets the form'>hx-post · afterbegin</span></h2>
+    <form id="new-event"
+          hx-post="/events"
+          hx-target="#event-rows"
+          hx-swap="afterbegin"
+          hx-disabled-elt="find button"
+          hx-on:chaos-logged="this.reset(); this.querySelector('[name=title]').focus()">
+      <input name="title" placeholder="What just broke?" autocomplete="off">
+      <div class="row2">
+        <select name="severity">
+          {% for s in SEVERITIES %}<option value="{{ s }}" {{ 'selected' if s == 'medium' }}>{{ SEV_EMOJI[s] }} {{ s }}</option>{% endfor %}
+        </select>
+        <select name="category">
+          {% for c in CATEGORIES %}<option>{{ c }}</option>{% endfor %}
+        </select>
+      </div>
+      <textarea name="description" rows="2" placeholder="Details (optional)"></textarea>
+      <div id="form-errors"></div>
+      <div class="actions">
+        <button type="submit">💥 Log it</button>
+        <button type="button" class="secondary"
+                hx-post="/events/random" hx-target="#event-rows" hx-swap="afterbegin"
+                hx-disabled-elt="this"
+                title="hx-post + hx-disabled-elt">🎲 Random chaos</button>
+      </div>
+      <p class="hint">Submit an empty title to see <code>HX-Retarget</code>/<code>HX-Reswap</code> put errors here.</p>
+    </form>
+  </section>
+
+  {% include "_stats.html" %}
+
+  <section class="card monkey-card">
+    <h2>Chaos monkey <span class="hx-badge" title="htmx SSE extension: sse-connect + sse-swap">SSE</span></h2>
+    <p>Unleash the monkey and it will push new incidents to <em>every open tab</em> over Server-Sent Events.</p>
+    {% include "_monkey.html" %}
+    <div id="ticker" class="ticker" sse-swap="ticker">Waiting for chaos…</div>
+    {# The table body below also listens on this SSE connection via sse-swap="chaos" #}
+  </section>
+</div>
+
+<section class="card">
+  <div class="list-head">
+    <h2>Incident log</h2>
+    <form id="filters" class="filters" onsubmit="return false">
+      <input type="search" name="q" value="{{ f.q }}" placeholder="🔎 Search chaos…"
+             hx-get="/events"
+             hx-trigger="input changed delay:300ms, search"
+             hx-target="#event-rows" hx-swap="innerHTML"
+             hx-include="#filters" hx-indicator="#search-spinner" hx-sync="this:replace">
+      <select name="severity" hx-get="/events" hx-trigger="change" hx-target="#event-rows"
+              hx-swap="innerHTML" hx-include="#filters" hx-indicator="#search-spinner">
+        <option value="">any severity</option>
+        {% for s in SEVERITIES %}<option value="{{ s }}" {{ 'selected' if f.severity == s }}>{{ s }}</option>{% endfor %}
+      </select>
+      <select name="status" hx-get="/events" hx-trigger="change" hx-target="#event-rows"
+              hx-swap="innerHTML" hx-include="#filters" hx-indicator="#search-spinner">
+        <option value="">any status</option>
+        {% for s in STATUSES %}<option value="{{ s }}" {{ 'selected' if f.status == s }}>{{ s }}</option>{% endfor %}
+      </select>
+      <span id="search-spinner" class="htmx-indicator spinner" aria-hidden="true"></span>
+      <span class="hx-badge" title='hx-trigger="input changed delay:300ms" + hx-indicator + hx-sync; server sends HX-Push-Url so filters are bookmarkable'>active search · HX-Push-Url</span>
+    </form>
+  </div>
+
+  <table class="events">
+    <thead>
+      <tr><th>Sev</th><th>Incident</th><th>Category</th><th>Status</th><th>When</th><th class="right">Actions</th></tr>
+    </thead>
+    <tbody id="event-rows" sse-swap="chaos" hx-swap="afterbegin">
+      {% include "_rows.html" %}
+    </tbody>
+  </table>
+  <p class="legend">
+    <span class="hx-badge">hx-get → edit row</span>
+    <span class="hx-badge">hx-put save</span>
+    <span class="hx-badge">hx-patch status</span>
+    <span class="hx-badge">hx-delete + hx-confirm + swap:500ms fade</span>
+    <span class="hx-badge">hx-trigger="revealed" infinite scroll</span>
+    <span class="hx-badge">hx-push-url detail</span>
+  </p>
+</section>
+
+</div>{# /sse #}
+
+{% if detail %}{% with e=detail %}{% include "_detail.html" %}{% endwith %}{% else %}<aside id="detail" class="detail"></aside>{% endif %}
+{% endblock %}

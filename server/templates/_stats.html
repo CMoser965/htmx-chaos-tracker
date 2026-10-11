@@ -1,0 +1,19 @@
+<section id="stats" class="card stats"
+         hx-get="/stats" hx-trigger="every 2s" hx-swap="outerHTML"{% if oob %} hx-swap-oob="true"{% endif %}>
+  <h2>Chaos level <span class="hx-badge" title='hx-trigger="every 2s" polling, also refreshed via hx-swap-oob'>polling · every 2s</span></h2>
+  <div class="meter" role="meter" aria-valuenow="{{ stats.level }}" aria-valuemin="0" aria-valuemax="100">
+    <div class="meter-fill" style="width: {{ stats.level }}%"></div>
+  </div>
+  <p class="mood"><strong>{{ stats.level }}%</strong> · {{ stats.mood }}</p>
+  <div class="stat-grid">
+    <div><b>{{ stats.by_status.open }}</b><span>open</span></div>
+    <div><b>{{ stats.by_status.mitigating }}</b><span>mitigating</span></div>
+    <div><b>{{ stats.by_status.resolved }}</b><span>resolved</span></div>
+    <div><b>{{ stats.total }}</b><span>total</span></div>
+  </div>
+  <p class="sev-line">
+    {% for s in SEVERITIES %}<span>{{ SEV_EMOJI[s] }} {{ stats.by_sev[s] }}</span>{% endfor %}
+    <span class="muted">active by severity</span>
+  </p>
+  <p class="muted small">Last poll {{ stats.now }}{% if stats.monkey %} · 🐒 monkey is loose{% endif %}</p>
+</section>

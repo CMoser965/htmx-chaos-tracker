@@ -1,0 +1,15 @@
+<aside id="detail" class="detail open">
+<div class="detail-inner">
+  <button class="icon close" title="Close (hx-get + hx-select + hx-push-url)"
+          hx-get="/" hx-select="#detail" hx-target="#detail" hx-swap="outerHTML" hx-push-url="true">✖</button>
+  <p class="muted small">Incident #{{ e.id }} · URL pushed with <code>hx-push-url</code> — try Back / refresh</p>
+  <h3>{{ SEV_EMOJI[e.severity] }} {{ e.title }}</h3>
+  <dl>
+    <dt>Severity</dt><dd>{{ e.severity }}</dd>
+    <dt>Category</dt><dd>{{ e.category }}</dd>
+    <dt>Status</dt><dd>{{ e.status }}</dd>
+    <dt>Logged</dt><dd>{{ e.created.strftime('%Y-%m-%d %H:%M') }} ({{ e.created|ago }})</dd>
+  </dl>
+  <p>{{ e.description or 'No details. Pure, unexplained chaos.' }}</p>
+</div>
+</aside>
